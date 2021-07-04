@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:memorize_numbers/shared/navigation.dart';
 import 'package:memorize_numbers/training/training.dart';
 
 class StartPage extends StatelessWidget {
@@ -64,44 +65,20 @@ class StartMenu extends StatelessWidget {
       width: 400,
       child: Column(
         mainAxisSize: MainAxisSize.max,
-        children: [
-          StartMenuButton('Training', (context) => onTrainingClick(context))
-        ],
+        children: [NavigationButton('Training', navigateToTraining)],
       ),
     );
   }
 
-  void onTrainingClick(BuildContext context) {
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(
-        builder: (BuildContext context) => Training(),
-      ),
-      (route) => false,
-    );
-  }
-}
-
-class StartMenuButton extends StatelessWidget {
-  final String text;
-  final Function onClick;
-  const StartMenuButton(this.text, this.onClick, {Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: SizedBox(
-        width: 300,
-        height: 64,
-        child: ElevatedButton(
-          onPressed: () => onClick,
-          child: Text(
-            this.text,
-            style: TextStyle(fontSize: 32.0),
-          ),
-        ),
-      ),
-    );
+  void navigateToTraining(BuildContext context) {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => TrainingPage()));
+    // Navigator.pushAndRemoveUntil(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (BuildContext context) => Training(),
+    //   ),
+    //   (route) => false,
+    // );
   }
 }

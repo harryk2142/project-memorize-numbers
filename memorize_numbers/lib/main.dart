@@ -11,6 +11,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Besieg die Zahlen',
       theme: ThemeData(
+          textTheme: TextTheme(bodyText1: TextStyle(height: 1, fontSize: 32)),
           primarySwatch: Colors.green,
           buttonTheme: ButtonThemeData(buttonColor: Colors.grey)),
       home: StartPage(),

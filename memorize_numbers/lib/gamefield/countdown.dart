@@ -2,9 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-// ignore: must_be_immutable
 class Countdown extends StatefulWidget {
-  var _milliseconds = 0;
+  final _milliseconds;
 
   final Function _onEnd;
 

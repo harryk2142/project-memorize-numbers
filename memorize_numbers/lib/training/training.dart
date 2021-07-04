@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:memorize_numbers/gamefield/gamefield.dart';
 import 'package:memorize_numbers/shared/navigation.dart';
 
 class TrainingPage extends StatefulWidget {
@@ -91,7 +92,12 @@ class _TrainingPageState extends State<TrainingPage> {
     );
   }
 
-  navigateToGame(BuildContext context) {}
+  navigateToGame(BuildContext context) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => GameField(_rounds, _digits, _displayTime)));
+  }
 
   navigateBack(BuildContext context) {
     Navigator.pop(context);

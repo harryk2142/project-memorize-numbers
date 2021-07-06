@@ -84,7 +84,7 @@ class _TrainingPageState extends State<TrainingPage> {
           Column(
             children: [
               NavigationButton('Start', navigateToGame),
-              NavigationButton('Back', navigateBack)
+              NavigationButton('Zurück', navigateBack)
             ],
           )
         ],

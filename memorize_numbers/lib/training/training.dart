@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:memorize_numbers/gamefield/gamefield.dart';
 import 'package:memorize_numbers/shared/navigation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TrainingPage extends StatefulWidget {
   const TrainingPage({Key? key}) : super(key: key);
@@ -13,6 +14,12 @@ class _TrainingPageState extends State<TrainingPage> {
   int _rounds = 1;
   int _digits = 5;
   double _displayTime = 2.0;
+  @override
+  void initState() {
+    super.initState();
+    openBox();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,6 +45,7 @@ class _TrainingPageState extends State<TrainingPage> {
                   setState(() {
                     _rounds = value.toInt();
                   });
+                  updateBox();
                 },
               ),
               Text(
@@ -55,6 +63,7 @@ class _TrainingPageState extends State<TrainingPage> {
                   setState(() {
                     _digits = value.toInt();
                   });
+                  updateBox();
                 },
               ),
               Text(
@@ -72,6 +81,7 @@ class _TrainingPageState extends State<TrainingPage> {
                   setState(() {
                     _displayTime = value;
                   });
+                  updateBox();
                 },
               ),
               Text(
@@ -101,6 +111,45 @@ class _TrainingPageState extends State<TrainingPage> {
 
   navigateBack(BuildContext context) {
     Navigator.pop(context);
+  }
+
+  void openBox() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('settings.training.rounds')) {
+      prefs.setInt('settings.training.rounds', _rounds);
+    } else {
+      int rounds = prefs.getInt('settings.training.rounds') ?? _rounds;
+      setState(() {
+        _rounds = rounds;
+      });
+    }
+    if (!prefs.containsKey('settings.training.digits')) {
+      prefs.setInt('settings.training.digits', _digits);
+    } else {
+      int digits = prefs.getInt('settings.training.digits') ?? _digits;
+      setState(() {
+        _digits = digits;
+      });
+    }
+    if (!prefs.containsKey('settings.training.displayTime')) {
+      prefs.setDouble('settings.training.displayTime', _displayTime);
+    } else {
+      double displayTime =
+          prefs.getDouble('settings.training.displayTime') ?? _displayTime;
+      setState(() {
+        _displayTime = displayTime;
+      });
+    }
+    print('first values saved');
+  }
+
+  void updateBox() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setInt('settings.training.rounds', _rounds);
+
+    prefs.setInt('settings.training.digits', _digits);
+
+    prefs.setDouble('settings.training.displayTime', _displayTime);
   }
 }
 

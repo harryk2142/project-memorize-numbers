@@ -4,7 +4,6 @@ import 'package:memorize_numbers/training/training.dart';
 
 class StartPage extends StatelessWidget {
   const StartPage({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -12,6 +11,7 @@ class StartPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            Text(' '),
             Column(
               children: [
                 StartIcon(),
@@ -28,7 +28,6 @@ class StartPage extends StatelessWidget {
 
 class StartIcon extends StatelessWidget {
   const StartIcon({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -43,7 +42,6 @@ class StartIcon extends StatelessWidget {
 
 class Title extends StatelessWidget {
   const Title({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -58,27 +56,22 @@ class Title extends StatelessWidget {
 
 class StartMenu extends StatelessWidget {
   const StartMenu({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Container(
+      alignment: Alignment.bottomCenter,
       width: 400,
       child: Column(
         mainAxisSize: MainAxisSize.max,
-        children: [NavigationButton('Training', navigateToTraining)],
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          NaviButton(
+            'Zum Training',
+            TrainingPage(),
+            enableBack: true,
+          )
+        ],
       ),
     );
-  }
-
-  void navigateToTraining(BuildContext context) {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => TrainingPage()));
-    // Navigator.pushAndRemoveUntil(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (BuildContext context) => Training(),
-    //   ),
-    //   (route) => false,
-    // );
   }
 }

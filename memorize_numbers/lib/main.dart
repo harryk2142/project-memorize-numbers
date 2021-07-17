@@ -11,9 +11,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         title: 'Besieg die Zahlen',
         theme: ThemeData(
-            textTheme: TextTheme(bodyText1: TextStyle(height: 1, fontSize: 32)),
-            primarySwatch: Colors.green,
-            buttonTheme: ButtonThemeData(buttonColor: Colors.grey)),
+          iconTheme: IconThemeData(size: 32),
+          buttonTheme: ButtonThemeData(height: 16),
+          textTheme: TextTheme(
+              bodyText1: TextStyle(height: 1, fontSize: 32),
+              button: TextStyle(fontSize: 32)),
+          primarySwatch: Colors.green,
+        ),
         home: StartPage());
   }
 }

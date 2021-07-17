@@ -17,7 +17,7 @@ class _TrainingPageState extends State<TrainingPage> {
   @override
   void initState() {
     super.initState();
-    openBox();
+    loadSettings();
   }
 
   @override
@@ -45,7 +45,7 @@ class _TrainingPageState extends State<TrainingPage> {
                   setState(() {
                     _rounds = value.toInt();
                   });
-                  updateBox();
+                  updateSettings();
                 },
               ),
               Text(
@@ -63,7 +63,7 @@ class _TrainingPageState extends State<TrainingPage> {
                   setState(() {
                     _digits = value.toInt();
                   });
-                  updateBox();
+                  updateSettings();
                 },
               ),
               Text(
@@ -81,7 +81,7 @@ class _TrainingPageState extends State<TrainingPage> {
                   setState(() {
                     _displayTime = value;
                   });
-                  updateBox();
+                  updateSettings();
                 },
               ),
               Text(
@@ -93,8 +93,12 @@ class _TrainingPageState extends State<TrainingPage> {
           ),
           Column(
             children: [
-              NavigationButton('Start', navigateToGame),
-              NavigationButton('Zurück', navigateBack)
+              NaviButton(
+                'Start',
+                Gamefield(this._rounds, this._digits, this._displayTime),
+                enableBack: false,
+              ),
+              NaviBackButton('Zurück')
             ],
           )
         ],
@@ -102,18 +106,7 @@ class _TrainingPageState extends State<TrainingPage> {
     );
   }
 
-  navigateToGame(BuildContext context) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => GameField(_rounds, _digits, _displayTime)));
-  }
-
-  navigateBack(BuildContext context) {
-    Navigator.pop(context);
-  }
-
-  void openBox() async {
+  void loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
     if (!prefs.containsKey('settings.training.rounds')) {
       prefs.setInt('settings.training.rounds', _rounds);
@@ -143,7 +136,7 @@ class _TrainingPageState extends State<TrainingPage> {
     print('first values saved');
   }
 
-  void updateBox() async {
+  void updateSettings() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setInt('settings.training.rounds', _rounds);
 

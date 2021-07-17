@@ -1,42 +1,49 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:memorize_numbers/gamefield/countdown.dart';
+import 'package:flutter/widgets.dart';
+import 'package:memorize_numbers/gamefield/gamefield_countdown.dart';
+import 'package:memorize_numbers/shared/countdown.dart';
 import 'package:memorize_numbers/gamefield/digitgenerator.dart';
 import 'package:memorize_numbers/gamefield/result.dart';
-import 'package:memorize_numbers/shared/navigation.dart';
 import 'package:memorize_numbers/start/start.dart';
 
-enum GameFieldState { timer, showNumber, inputNumber, showResult }
+enum GamefieldState { timer, showNumber, inputNumber, showResult }
 
-class GameField extends StatefulWidget {
+class Gamefield extends StatefulWidget {
   final int _rounds;
-  final double _displayTime;
   final int _digits;
+  final double _displayTime;
 
-  final DigitGenerator digitGenerator = DigitGenerator();
-  GameField(this._rounds, this._digits, this._displayTime, {Key? key})
+  Gamefield(this._rounds, this._digits, this._displayTime, {Key? key})
       : super(key: key);
+
   @override
-  _GameFieldState createState() {
-    return _GameFieldState();
-  }
+  _GamefieldState createState() => _GamefieldState();
 }
 
-class _GameFieldState extends State<GameField> {
-  GameFieldState? _currentState;
-  bool _inputCorrect = false;
-  String _generatedNumber = '';
+class _GamefieldState extends State<Gamefield> {
+  late GamefieldState _currentState;
+
+  final PageController _pageController = PageController(initialPage: 0);
+  final DigitGenerator _digitGenerator = DigitGenerator();
+  int _currentRound = 1;
+  late String _generatedNumber = '';
+  final List<bool> inputPressed = [];
+  final List<String> _inputList = [];
+  String _input = '';
   int _correct = 0;
   int _wrong = 0;
-  int _currentRound = 1;
-  String _inputNumber = '';
-  late Widget _body;
+  bool isCorrect = false;
 
   @override
   void initState() {
-    _currentState = GameFieldState.timer;
-    _body = getWidget();
+    this._currentState = GamefieldState.timer;
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   @override
@@ -44,98 +51,145 @@ class _GameFieldState extends State<GameField> {
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-            centerTitle: true,
-            title: Text('RUNDE $_currentRound/${widget._rounds}'),
-          ),
-          body: _body),
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          centerTitle: true,
+          title: Text('RUNDE $_currentRound/${widget._rounds}'),
+        ),
+        body: PageView(
+          controller: _pageController,
+          physics: NeverScrollableScrollPhysics(),
+          children: [
+            gamefieldCountdown(),
+            gamefieldShowNumber(),
+            gamefieldInputNumber(),
+            gamefieldResult(),
+          ],
+        ),
+      ),
     );
   }
 
-  Widget getWidget() {
-    switch (this._currentState) {
-      case GameFieldState.timer:
-        this.setState(() {
-          this._generatedNumber = this
-              .widget
-              .digitGenerator
-              .generateRandomInteger(this.widget._digits);
-        });
-        return showTimer();
-      case GameFieldState.showNumber:
-        return showNumberWidget();
-      case GameFieldState.inputNumber:
-        return inputNumberWidget();
-      case GameFieldState.showResult:
-        return showResultWidget();
-      default:
-        return showBackWidget();
-    }
+  Widget gamefieldCountdown() {
+    return GamefieldCountdown(changeGamestate);
   }
 
-  Widget showNumberWidget() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+  Widget gamefieldShowNumber() {
+    return Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.max,
         children: [
-          Countdown((this.widget._displayTime * 1000).toInt(), updateValues),
-          Text(
-            'Merke: ${this._generatedNumber}',
-            style: TextStyle(fontSize: 32),
+          Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
+                child: Text(
+                  'Merke:',
+                  style: TextStyle(fontSize: 32),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                child: Text(
+                  '${this._generatedNumber}',
+                  style: TextStyle(fontSize: 32, letterSpacing: 10),
+                ),
+              ),
+            ],
+          ),
+          Container(
+            child: Countdown((this.widget._displayTime * 1000).toInt(), () {
+              changeGamestate();
+            }),
+          ),
+          Text(' ')
+        ]);
+  }
+
+  Widget gamefieldInputNumber() {
+    return Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+      Padding(
+        padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
+        child: Text(
+          'Eingabe:',
+          style: TextStyle(fontSize: 32),
+        ),
+      ),
+      Padding(
+        padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+        child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: hiddenNumber()),
+      ),
+      numberInputContainer(),
+    ]);
+  }
+
+  Widget numberInputContainer() {
+    return Container(
+      width: 300,
+      height: 400,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              BtnInputNumber(Text('1'), () {
+                onBtnNumberPressed(1);
+              }),
+              BtnInputNumber(Text('4'), () {
+                onBtnNumberPressed(4);
+              }),
+              BtnInputNumber(Text('7'), () {
+                onBtnNumberPressed(7);
+              }),
+              BtnInputNumber(Icon(Icons.backspace), () {
+                onBtnBackPressed();
+              }),
+            ],
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              BtnInputNumber(Text('2'), () {
+                onBtnNumberPressed(2);
+              }),
+              BtnInputNumber(Text('5'), () {
+                onBtnNumberPressed(5);
+              }),
+              BtnInputNumber(Text('8'), () {
+                onBtnNumberPressed(8);
+              }),
+              BtnInputNumber(Text('0'), () {
+                onBtnNumberPressed(0);
+              }),
+            ],
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              BtnInputNumber(Text('3'), () {
+                onBtnNumberPressed(3);
+              }),
+              BtnInputNumber(Text('6'), () {
+                onBtnNumberPressed(6);
+              }),
+              BtnInputNumber(Text('9'), () {
+                onBtnNumberPressed(9);
+              }),
+              BtnInputNumber(Icon(Icons.done), () {
+                onBtnSubmitPressed();
+              }),
+            ],
           ),
         ],
       ),
     );
   }
 
-  void updateValues() {
-    this.setState(() {
-      this._currentState = GameFieldState.inputNumber;
-      this._body = getWidget();
-    });
-  }
-
-  navigateToTimer(BuildContext context) {
-    this.setState(() {
-      this._currentRound++;
-    });
-
-    if (this._currentRound > this.widget._rounds) {
-      print('backToStart');
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => StartPage()));
-    } else {
-      print('navigateToTimer');
-      this.setState(() {
-        this._currentState = GameFieldState.timer;
-        this._body = getWidget();
-      });
-    }
-  }
-
-  Widget inputNumberWidget() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        TextField(
-          decoration: new InputDecoration(labelText: 'Zahl eingeben'),
-          autofocus: true,
-          maxLength: this.widget._digits,
-          keyboardType: TextInputType.number,
-          style: TextStyle(fontSize: 32.0, height: 1.0, color: Colors.black),
-          inputFormatters: <TextInputFormatter>[
-            FilteringTextInputFormatter.digitsOnly
-          ],
-          onSubmitted: (value) =>
-              checkInput(value), // Only numbers can be entered
-        ),
-      ],
-    );
-  }
-
-  Widget showResultWidget() {
+  Widget gamefieldResult() {
     String buttonText = '';
     if (this._currentRound == this.widget._rounds) {
       buttonText = 'Zum Hauptmenü';
@@ -153,65 +207,210 @@ class _GameFieldState extends State<GameField> {
         ),
         Container(
             padding: const EdgeInsets.all(16.0),
-            child: ResultInfo(
-                this._generatedNumber, this._inputCorrect, this._inputNumber)),
-        NavigationButton(buttonText, navigateToTimer)
+            child:
+                ResultInfo(this._generatedNumber, this.isCorrect, this._input)),
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: SizedBox(
+            width: 300,
+            height: 64,
+            child: ElevatedButton(
+              onPressed: () {
+                changeGamestate();
+                navigateToNext(context);
+              },
+              child: Text(
+                buttonText,
+                style: TextStyle(fontSize: 32.0),
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }
 
-  Widget showBackWidget() {
-    return Center(
-        child: TextButton(
-      onPressed: () => {
-        Navigator.of(context).push(
-            MaterialPageRoute(builder: (BuildContext context) => StartPage()))
-      },
-      child: Text(
-        "Zurück zum Start",
-        style: TextStyle(height: 1, fontSize: 32),
-      ),
-    ));
+  void changeGamestate() {
+    switch (this._currentState) {
+      case GamefieldState.timer:
+        this.setState(() {
+          this._generatedNumber =
+              this._digitGenerator.generateRandomInteger(this.widget._digits);
+          this._currentState = GamefieldState.showNumber;
+        });
+
+        if (_pageController.hasClients) {
+          _pageController.animateToPage(
+            1,
+            duration: const Duration(milliseconds: 100),
+            curve: Curves.linear,
+          );
+        }
+        break;
+      case GamefieldState.showNumber:
+        this.setState(() {
+          this._currentState = GamefieldState.inputNumber;
+          this._input = '';
+          this._inputList.clear();
+          this.inputPressed.clear();
+        });
+        if (_pageController.hasClients) {
+          _pageController.jumpToPage(2);
+        }
+        break;
+      case GamefieldState.inputNumber:
+        this.setState(() {
+          this._currentState = GamefieldState.showResult;
+        });
+        _pageController.animateToPage(
+          3,
+          duration: const Duration(milliseconds: 100),
+          curve: Curves.linear,
+        );
+        break;
+      case GamefieldState.showResult:
+        this.setState(() {
+          this._currentState = GamefieldState.timer;
+          this._currentRound++;
+        });
+
+        break;
+    }
   }
 
-  void checkInput(String input) {
-    this.setState(() {
-      _inputCorrect = this._generatedNumber == input;
-      this._inputNumber = input;
-      _currentState = GameFieldState.showResult;
-      if (_inputCorrect) {
-        _correct++;
-      } else {
-        _wrong++;
+  List<Widget> hiddenNumber() {
+    List<Widget> widgets = [];
+    for (var i = 0; i < this.widget._digits; i++) {
+      this.inputPressed.add(false);
+      this._inputList.add('');
+      widgets.add(_HiddenChar(this.inputPressed[i], this._inputList[i]));
+    }
+    return widgets;
+  }
+
+  onBtnNumberPressed(int number) {
+    setState(() {
+      if (_input.length < this.widget._digits) {
+        this.inputPressed[_input.length] = true;
+        this._inputList[_input.length] = number.toString();
+        _input += number.toString();
       }
-      this._body = getWidget();
     });
   }
 
-  Widget showTimer() {
-    this.setState(() {
-      String number =
-          widget.digitGenerator.generateRandomInteger(this.widget._digits);
-      this._generatedNumber = number;
+  onBtnBackPressed() {
+    setState(() {
+      if (_input.length > 0) {
+        _input = _input.substring(0, _input.length - 1);
+        this.inputPressed[_input.length] = false;
+        this._inputList[_input.length] = '';
+      }
     });
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            'Runde startet in',
-            style: TextStyle(fontSize: 32),
-          ),
-          Countdown(3000, this.startRound),
-        ],
+  }
+
+  onBtnSubmitPressed() {
+    checkInput();
+    changeGamestate();
+  }
+
+  void checkInput() {
+    if (this._input == this._generatedNumber) {
+      setState(() {
+        this._correct++;
+        this.isCorrect = true;
+      });
+    } else {
+      setState(() {
+        this.isCorrect = false;
+        this._wrong++;
+      });
+    }
+  }
+
+  navigateToNext(BuildContext context) {
+    if (this._currentRound <= this.widget._rounds) {
+      _pageController.animateToPage(
+        0,
+        duration: const Duration(milliseconds: 100),
+        curve: Curves.linear,
+      );
+      return;
+    } else {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => StartPage()),
+        (Route<dynamic> route) => false,
+      );
+      return;
+    }
+  }
+}
+
+class _HiddenChar extends StatelessWidget {
+  final bool isPressed;
+  final String input;
+
+  _HiddenChar(
+    this.isPressed,
+    this.input, {
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Text(
+        isPressed ? this.input : '*',
+        style: TextStyle(
+            letterSpacing: 16,
+            fontSize: 32,
+            color: isPressed ? Colors.green : Colors.black),
       ),
     );
   }
+}
 
-  startRound() {
-    this.setState(() {
-      this._currentState = GameFieldState.showNumber;
-      this._body = getWidget();
-    });
+class BtnInputNumber extends StatelessWidget {
+  final _onPressed;
+
+  final Widget value;
+
+  BtnInputNumber(
+    this.value,
+    this._onPressed, {
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 74,
+      height: 74,
+      color: Colors.black,
+      margin: const EdgeInsets.all(2.0),
+      padding: const EdgeInsets.all(2.0),
+      child: FloatingActionButton(
+        shape: RoundedRectangleBorder(),
+        onPressed: _onPressed,
+        child: value,
+      ),
+    );
+  }
+}
+
+class BtnInput extends StatelessWidget {
+  final _onPressed;
+
+  final Icon _child;
+
+  BtnInput(
+    this._child,
+    this._onPressed, {
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(onPressed: _onPressed, child: _child);
   }
 }

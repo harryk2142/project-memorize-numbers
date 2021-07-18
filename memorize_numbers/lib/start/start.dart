@@ -31,11 +31,7 @@ class StartIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Padding(
-        padding: const EdgeInsets.only(
-            top: 32.0, bottom: 16.0, left: 32.0, right: 32.0),
-        child: Image(width: 128, image: AssetImage('assets/icons/icon.png')),
-      ),
+      child: Image(image: AssetImage('assets/icons/icon.png')),
     );
   }
 }

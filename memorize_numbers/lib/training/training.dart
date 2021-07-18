@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:memorize_numbers/gamefield/gamefield.dart';
+import 'package:memorize_numbers/shared/constants.dart';
 import 'package:memorize_numbers/shared/navigation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -24,22 +25,22 @@ class _TrainingPageState extends State<TrainingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        centerTitle: true,
-        title: Text('Training'),
-      ),
+          automaticallyImplyLeading: false,
+          centerTitle: true,
+          title: Text('Training',
+              style: TextStyle(color: Constants.mainTextColor))),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Center(),
           Column(
             children: [
-              CustomDivider(),
+              _CustomDivider(),
               Slider(
                 value: _rounds.toDouble(),
                 min: 1,
                 max: 10,
-                activeColor: Colors.green,
+                activeColor: Constants.mainBackgroundColor,
                 divisions: 10,
                 onChanged: (double value) {
                   setState(() {
@@ -52,13 +53,13 @@ class _TrainingPageState extends State<TrainingPage> {
                 'Runden: $_rounds',
                 style: Theme.of(context).textTheme.bodyText1,
               ),
-              CustomDivider(),
+              _CustomDivider(),
               Slider(
                 value: _digits.toDouble(),
-                min: 1,
+                min: 2,
                 max: 10,
-                activeColor: Colors.green,
-                divisions: 10,
+                activeColor: Constants.mainBackgroundColor,
+                divisions: 9,
                 onChanged: (double value) {
                   setState(() {
                     _digits = value.toInt();
@@ -70,12 +71,12 @@ class _TrainingPageState extends State<TrainingPage> {
                 'Ziffern: $_digits',
                 style: Theme.of(context).textTheme.bodyText1,
               ),
-              CustomDivider(),
+              _CustomDivider(),
               Slider(
                 value: _displayTime,
                 min: 0.5,
                 max: 6,
-                activeColor: Colors.green,
+                activeColor: Constants.mainBackgroundColor,
                 divisions: 11,
                 onChanged: (double value) {
                   setState(() {
@@ -88,7 +89,7 @@ class _TrainingPageState extends State<TrainingPage> {
                 'Sekunden: $_displayTime',
                 style: Theme.of(context).textTheme.bodyText1,
               ),
-              CustomDivider(),
+              _CustomDivider(),
             ],
           ),
           Column(
@@ -146,14 +147,14 @@ class _TrainingPageState extends State<TrainingPage> {
   }
 }
 
-class CustomDivider extends StatelessWidget {
-  const CustomDivider({Key? key}) : super(key: key);
+class _CustomDivider extends StatelessWidget {
+  const _CustomDivider({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Divider(
       thickness: 2.0,
-      color: Colors.green,
+      color: Constants.mainBackgroundColor,
     );
   }
 }

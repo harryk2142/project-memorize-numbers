@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:memorize_numbers/shared/constants.dart';
 import 'package:memorize_numbers/start/start.dart';
 
 void main() async {
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
           textTheme: TextTheme(
               bodyText1: TextStyle(height: 1, fontSize: 32),
               button: TextStyle(fontSize: 32)),
-          primarySwatch: Colors.green,
+          primarySwatch: Constants.mainBackgroundColor,
         ),
         home: StartPage());
   }

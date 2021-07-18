@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:memorize_numbers/shared/constants.dart';
 
 class NaviButton extends StatelessWidget {
   final String text;
@@ -21,7 +22,7 @@ class NaviButton extends StatelessWidget {
           },
           child: Text(
             this.text,
-            style: TextStyle(fontSize: 32.0),
+            style: TextStyle(fontSize: 32.0, color: Constants.mainTextColor),
           ),
         ),
       ),
@@ -62,7 +63,7 @@ class NaviBackButton extends StatelessWidget {
           },
           child: Text(
             this.text,
-            style: TextStyle(fontSize: 32.0),
+            style: TextStyle(fontSize: 32.0, color: Constants.mainTextColor),
           ),
         ),
       ),

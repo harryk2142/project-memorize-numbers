@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:memorize_numbers/gamefield/gamefield_countdown.dart';
+import 'package:memorize_numbers/shared/constants.dart';
 import 'package:memorize_numbers/shared/countdown.dart';
 import 'package:memorize_numbers/gamefield/digitgenerator.dart';
 import 'package:memorize_numbers/gamefield/result.dart';
@@ -53,10 +54,10 @@ class _GamefieldState extends State<Gamefield> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          automaticallyImplyLeading: false,
-          centerTitle: true,
-          title: Text('RUNDE $_currentRound/${widget._rounds}'),
-        ),
+            automaticallyImplyLeading: false,
+            centerTitle: true,
+            title: Text('RUNDE $_currentRound/${widget._rounds}',
+                style: TextStyle(color: Constants.mainTextColor))),
         body: PageView(
           controller: _pageController,
           physics: NeverScrollableScrollPhysics(),
@@ -136,16 +137,20 @@ class _GamefieldState extends State<Gamefield> {
           Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              BtnInputNumber(Text('1'), () {
+              BtnInputNumber(_TextInputNumber(1), () {
                 onBtnNumberPressed(1);
               }),
-              BtnInputNumber(Text('4'), () {
+              BtnInputNumber(_TextInputNumber(4), () {
                 onBtnNumberPressed(4);
               }),
-              BtnInputNumber(Text('7'), () {
+              BtnInputNumber(_TextInputNumber(7), () {
                 onBtnNumberPressed(7);
               }),
-              BtnInputNumber(Icon(Icons.backspace), () {
+              BtnInputNumber(
+                  Icon(
+                    Icons.backspace,
+                    color: Constants.mainTextColor,
+                  ), () {
                 onBtnBackPressed();
               }),
             ],
@@ -153,16 +158,16 @@ class _GamefieldState extends State<Gamefield> {
           Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              BtnInputNumber(Text('2'), () {
+              BtnInputNumber(_TextInputNumber(2), () {
                 onBtnNumberPressed(2);
               }),
-              BtnInputNumber(Text('5'), () {
+              BtnInputNumber(_TextInputNumber(5), () {
                 onBtnNumberPressed(5);
               }),
-              BtnInputNumber(Text('8'), () {
+              BtnInputNumber(_TextInputNumber(8), () {
                 onBtnNumberPressed(8);
               }),
-              BtnInputNumber(Text('0'), () {
+              BtnInputNumber(_TextInputNumber(0), () {
                 onBtnNumberPressed(0);
               }),
             ],
@@ -170,16 +175,17 @@ class _GamefieldState extends State<Gamefield> {
           Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              BtnInputNumber(Text('3'), () {
+              BtnInputNumber(_TextInputNumber(3), () {
                 onBtnNumberPressed(3);
               }),
-              BtnInputNumber(Text('6'), () {
+              BtnInputNumber(_TextInputNumber(6), () {
                 onBtnNumberPressed(6);
               }),
-              BtnInputNumber(Text('9'), () {
+              BtnInputNumber(_TextInputNumber(9), () {
                 onBtnNumberPressed(9);
               }),
-              BtnInputNumber(Icon(Icons.done), () {
+              BtnInputNumber(Icon(Icons.done, color: Constants.mainTextColor),
+                  () {
                 onBtnSubmitPressed();
               }),
             ],
@@ -221,7 +227,8 @@ class _GamefieldState extends State<Gamefield> {
               },
               child: Text(
                 buttonText,
-                style: TextStyle(fontSize: 32.0),
+                style:
+                    TextStyle(fontSize: 32.0, color: Constants.mainTextColor),
               ),
             ),
           ),
@@ -346,6 +353,23 @@ class _GamefieldState extends State<Gamefield> {
   }
 }
 
+class _TextInputNumber extends StatelessWidget {
+  final int number;
+
+  const _TextInputNumber(
+    this.number, {
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(number.toString(),
+        style: TextStyle(
+          color: Constants.mainTextColor,
+        ));
+  }
+}
+
 class _HiddenChar extends StatelessWidget {
   final bool isPressed;
   final String input;
@@ -364,7 +388,7 @@ class _HiddenChar extends StatelessWidget {
         style: TextStyle(
             letterSpacing: 16,
             fontSize: 32,
-            color: isPressed ? Colors.green : Colors.black),
+            color: isPressed ? Constants.mainBackgroundColor : Colors.black),
       ),
     );
   }
@@ -387,8 +411,8 @@ class BtnInputNumber extends StatelessWidget {
       width: 74,
       height: 74,
       color: Colors.black,
-      margin: const EdgeInsets.all(2.0),
-      padding: const EdgeInsets.all(2.0),
+      margin: const EdgeInsets.all(1.0),
+      padding: const EdgeInsets.all(1.0),
       child: FloatingActionButton(
         shape: RoundedRectangleBorder(),
         onPressed: _onPressed,

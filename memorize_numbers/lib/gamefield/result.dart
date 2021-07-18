@@ -23,7 +23,7 @@ class ResultInfo extends StatelessWidget {
               Icon(
                 Icons.sentiment_satisfied,
                 color: Colors.green,
-                size: 64,
+                size: 128,
               ),
               Text(
                 'Zahl ist korrekt',
@@ -42,7 +42,7 @@ class ResultInfo extends StatelessWidget {
               Icon(
                 Icons.sentiment_dissatisfied,
                 color: Colors.red,
-                size: 64,
+                size: 128,
               ),
               Text(
                 'Zahl ist falsch',
@@ -82,7 +82,7 @@ class ResultRow extends StatelessWidget {
             Icon(
               Icons.sentiment_satisfied,
               color: Colors.green,
-              size: 64,
+              size: 128,
             ),
             Text(
               '${this._correct}',
@@ -95,7 +95,7 @@ class ResultRow extends StatelessWidget {
             Icon(
               Icons.sentiment_dissatisfied,
               color: Colors.red,
-              size: 64,
+              size: 128,
             ),
             Text(
               '${this._wrong}',

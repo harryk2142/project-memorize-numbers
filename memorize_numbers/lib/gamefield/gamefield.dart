@@ -83,20 +83,12 @@ class _GamefieldState extends State<Gamefield> {
         children: [
           Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
-                child: Text(
+              numberInputHead(
                   'Merke:',
-                  style: TextStyle(fontSize: 32),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                child: Text(
-                  '${this._generatedNumber}',
-                  style: TextStyle(fontSize: 32, letterSpacing: 10),
-                ),
-              ),
+                  Text(
+                    '${this._generatedNumber}',
+                    style: TextStyle(fontSize: 64, letterSpacing: 10),
+                  )),
             ],
           ),
           Container(
@@ -104,93 +96,109 @@ class _GamefieldState extends State<Gamefield> {
               changeGamestate();
             }),
           ),
-          Text(' ')
+          Text('')
         ]);
   }
 
   Widget gamefieldInputNumber() {
-    return Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-      Padding(
-        padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
-        child: Text(
+    return Center(
+      child:
+          Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        numberInputHead(
           'Eingabe:',
-          style: TextStyle(fontSize: 32),
+          Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: hiddenNumber()),
         ),
-      ),
-      Padding(
-        padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-        child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: hiddenNumber()),
-      ),
-      numberInputContainer(),
-    ]);
+        numberInputContainer(),
+        Text('')
+      ]),
+    );
+  }
+
+  Widget numberInputHead(String text, Widget content) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
+          child: Text(
+            text,
+            style: TextStyle(fontSize: 32),
+          ),
+        ),
+        Padding(
+            padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+            child: content),
+      ],
+    );
   }
 
   Widget numberInputContainer() {
-    return Container(
-      width: 300,
-      height: 400,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              BtnInputNumber(_TextInputNumber(1), () {
-                onBtnNumberPressed(1);
-              }),
-              BtnInputNumber(_TextInputNumber(4), () {
-                onBtnNumberPressed(4);
-              }),
-              BtnInputNumber(_TextInputNumber(7), () {
-                onBtnNumberPressed(7);
-              }),
-              BtnInputNumber(
-                  Icon(
-                    Icons.backspace,
-                    color: Constants.mainTextColor,
-                  ), () {
-                onBtnBackPressed();
-              }),
-            ],
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              BtnInputNumber(_TextInputNumber(2), () {
-                onBtnNumberPressed(2);
-              }),
-              BtnInputNumber(_TextInputNumber(5), () {
-                onBtnNumberPressed(5);
-              }),
-              BtnInputNumber(_TextInputNumber(8), () {
-                onBtnNumberPressed(8);
-              }),
-              BtnInputNumber(_TextInputNumber(0), () {
-                onBtnNumberPressed(0);
-              }),
-            ],
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              BtnInputNumber(_TextInputNumber(3), () {
-                onBtnNumberPressed(3);
-              }),
-              BtnInputNumber(_TextInputNumber(6), () {
-                onBtnNumberPressed(6);
-              }),
-              BtnInputNumber(_TextInputNumber(9), () {
-                onBtnNumberPressed(9);
-              }),
-              BtnInputNumber(Icon(Icons.done, color: Constants.mainTextColor),
-                  () {
-                onBtnSubmitPressed();
-              }),
-            ],
-          ),
-        ],
+    return Center(
+      child: Container(
+        width: 300,
+        height: 400,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _BtnInputNumber(_TextInputNumber(1), () {
+                  onBtnNumberPressed(1);
+                }),
+                _BtnInputNumber(_TextInputNumber(4), () {
+                  onBtnNumberPressed(4);
+                }),
+                _BtnInputNumber(_TextInputNumber(7), () {
+                  onBtnNumberPressed(7);
+                }),
+                _BtnInputNumber(
+                    Icon(
+                      Icons.backspace,
+                      color: Constants.mainTextColor,
+                    ), () {
+                  onBtnBackPressed();
+                }),
+              ],
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _BtnInputNumber(_TextInputNumber(2), () {
+                  onBtnNumberPressed(2);
+                }),
+                _BtnInputNumber(_TextInputNumber(5), () {
+                  onBtnNumberPressed(5);
+                }),
+                _BtnInputNumber(_TextInputNumber(8), () {
+                  onBtnNumberPressed(8);
+                }),
+                _BtnInputNumber(_TextInputNumber(0), () {
+                  onBtnNumberPressed(0);
+                }),
+              ],
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _BtnInputNumber(_TextInputNumber(3), () {
+                  onBtnNumberPressed(3);
+                }),
+                _BtnInputNumber(_TextInputNumber(6), () {
+                  onBtnNumberPressed(6);
+                }),
+                _BtnInputNumber(_TextInputNumber(9), () {
+                  onBtnNumberPressed(9);
+                }),
+                _BtnInputNumber(
+                    Icon(Icons.done, color: Constants.mainTextColor), () {
+                  onBtnSubmitPressed();
+                }),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -387,19 +395,19 @@ class _HiddenChar extends StatelessWidget {
         isPressed ? this.input : '*',
         style: TextStyle(
             letterSpacing: 16,
-            fontSize: 32,
+            fontSize: 64,
             color: isPressed ? Constants.mainBackgroundColor : Colors.black),
       ),
     );
   }
 }
 
-class BtnInputNumber extends StatelessWidget {
+class _BtnInputNumber extends StatelessWidget {
   final _onPressed;
 
   final Widget value;
 
-  BtnInputNumber(
+  _BtnInputNumber(
     this.value,
     this._onPressed, {
     Key? key,
@@ -408,33 +416,16 @@ class BtnInputNumber extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 74,
-      height: 74,
+      width: 80,
+      height: 80,
       color: Colors.black,
-      margin: const EdgeInsets.all(1.0),
-      padding: const EdgeInsets.all(1.0),
+      margin: const EdgeInsets.all(2.0),
+      padding: const EdgeInsets.all(2.0),
       child: FloatingActionButton(
         shape: RoundedRectangleBorder(),
         onPressed: _onPressed,
         child: value,
       ),
     );
-  }
-}
-
-class BtnInput extends StatelessWidget {
-  final _onPressed;
-
-  final Icon _child;
-
-  BtnInput(
-    this._child,
-    this._onPressed, {
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(onPressed: _onPressed, child: _child);
   }
 }
